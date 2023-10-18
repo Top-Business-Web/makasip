@@ -51,30 +51,43 @@
                                     <th>{{ trans('site.actions') }}</th>
                                 </tr>
                                 @foreach ($data as $row)
-                                    @if ($row->points_for_click < $row->user->balance)
-                                        <tr id="row{{ $row->id }}">
-                                            <td>{{ $row->points_for_click }}</td>
-                                            <td>{{ $row->title }}</td>
-                                            <td>
-                                                <div class="text-center">
-                                                    <button data-site-id={{ $row->id }}
-                                                        data-url="{{ $row->url }}"
-                                                        class="Deletes Instagrams customBtn StartBtn mb-2">
-                                                        {{ trans('site.start') }}
-                                                    </button>
-                                                    <button data-site-id={{ $row->id }}
-                                                        data-user-id={{ auth()->user()->id }}
-                                                        data-url="{{ $row->url }}"
-                                                        class="Deletes Instagrams d-none customBtn myShareBtn">{{ trans('site.done') }}
-                                                    </button>
-                                                    <button class="Delete Instagrams customBtn skipBtn"
-                                                        onclick="HideFrame($(this).attr(('data-id')),$(this).attr('data-url'))"
-                                                        data-url="{{ $row->url }}"
-                                                        data-id="{{ $row->id }}">{{ trans('site.skip') }}
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                    @php
+                                        $confirm = App\Models\ConfirmationTask::where('user_id', auth()->user()->id)
+                                            ->where('site_id', $row->id)
+                                            ->first();
+
+                                    @endphp
+                                    @if (auth()->user()->id != $row->user_id)
+                                        @if ($row->points_for_click < $row->user->balance)
+                                            <tr id="row{{ $row->id }}">
+                                                <td>{{ $row->points_for_click }}</td>
+                                                <td>{{ $row->title }}</td>
+                                                <td>
+                                                    <div class="text-center">
+                                                        @if ($confirm && $confirm->status == 'un_confirmed')
+                                                            <button class="Deletes customBtn">جاري المعالجه سيصلك
+                                                                اشعار</button>
+                                                        @else
+                                                            <button data-site-id={{ $row->id }}
+                                                                data-url="{{ $row->url }}"
+                                                                class="Deletes Instagrams customBtn StartBtn mb-2">
+                                                                {{ trans('site.start') }}
+                                                            </button>
+                                                            <button data-site-id={{ $row->id }}
+                                                                data-user-id={{ auth()->user()->id }}
+                                                                data-url="{{ $row->url }}"
+                                                                class="Deletes Instagrams d-none customBtn myShareBtn">{{ trans('site.done') }}
+                                                            </button>
+                                                            <button class="Delete Instagrams customBtn skipBtn"
+                                                                onclick="HideFrame($(this).attr(('data-id')),$(this).attr('data-url'))"
+                                                                data-url="{{ $row->url }}"
+                                                                data-id="{{ $row->id }}">{{ trans('site.skip') }}
+                                                            </button>
+                                                        @endif
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endif
                                     @endif
                                 @endforeach
                             </table>

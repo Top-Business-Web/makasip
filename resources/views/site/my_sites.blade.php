@@ -53,10 +53,8 @@
                                     <th>{{ trans('site.points') }}</th>
                                     <th>{{ trans('site.actions') }}</th>
                                 </tr>
-{{--                                @php(dd($sites))--}}
                                 @foreach($sites as $site)
                                     <tr id="row{{$site->id}}">
-{{--                                        @php(dd($site->type))--}}
                                         <td>{{$site->type['title_'.\Illuminate\Support\Facades\App::getLocale()]}}</td>
                                         <td>
                                             {{$site->title}}
